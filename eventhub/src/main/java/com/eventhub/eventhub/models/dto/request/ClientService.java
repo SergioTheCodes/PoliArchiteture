@@ -10,8 +10,8 @@ import java.util.List;
 import com.eventhub.eventhub.models.dto.response.EventData;
 
 public class ClientService {
-    private String BaseUrl = "https://rest.bandsintown.com";
-    private String appId = "13722599";
+    private final String BaseUrl = "https://rest.bandsintown.com";
+    private final String appId = "13722599";
     public List<EventData> getEventsByArtistName(String artistName){
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(BaseUrl + "/artists/" + artistName)).build();
