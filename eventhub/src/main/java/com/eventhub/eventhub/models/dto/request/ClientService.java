@@ -25,4 +25,31 @@ public class ClientService {
         client.sendAsync(request, BodyHandlers.ofString()).thenApply(HttpResponse::body).thenAccept(System.out::println).join();
         return null;
     }
+
+
+	public List<EventData> getArtistsByName(String name) {
+		List<EventData> response = new ArrayList<>();
+		try {
+			String json = objectMapper.writeValueAsString(mapParam);
+			System.out.println(json);
+
+			UriComponentsBuilder builder = UriComponentsBuilder
+					.fromUriString("https://rest.bandsintown.com")
+					.queryParam("app_id", "13722599");
+			UriComponents uriComponent = builder.build().encode();
+
+			List<EventData> result = getClient().build().get().uri(uriComponent.toUri() + "/artists" + artistName + "/events")
+					.accept(MediaType.APPLICATION_JSON)
+					.retrieve().bodyToMono(new ParameterizedTypeReference<List<EventData>>() {
+					}).block();
+			finalResult.put("Response", result);
+			return finalResult;
+		} catch (Exception e) {
+			log.warn("Creation resource warning {}", e.getMessage());
+			finalResult.put("Failed", Collections.emptyList());
+			return finalResult;
+		}
+
+	}
+    
 }
