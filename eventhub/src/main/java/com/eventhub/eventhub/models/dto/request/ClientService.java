@@ -5,7 +5,16 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
+import java.util.Collections;
 
 import com.eventhub.eventhub.models.dto.response.EventData;
 
@@ -27,27 +36,25 @@ public class ClientService {
     }
 
 
-	public List<EventData> getArtistsByName(String name) {
+	public List<EventData> getArtistsByName(String artistName) {
 		List<EventData> response = new ArrayList<>();
 		try {
-			String json = objectMapper.writeValueAsString(mapParam);
-			System.out.println(json);
 
 			UriComponentsBuilder builder = UriComponentsBuilder
 					.fromUriString("https://rest.bandsintown.com")
 					.queryParam("app_id", "13722599");
 			UriComponents uriComponent = builder.build().encode();
-
-			List<EventData> result = getClient().build().get().uri(uriComponent.toUri() + "/artists" + artistName + "/events")
+			
+			List<EventData> result = WebClient.create().get().uri(uriComponent.toUri() + "/artists" + artistName + "/events")
 					.accept(MediaType.APPLICATION_JSON)
 					.retrieve().bodyToMono(new ParameterizedTypeReference<List<EventData>>() {
 					}).block();
-			finalResult.put("Response", result);
-			return finalResult;
+			
+			return response;
 		} catch (Exception e) {
-			log.warn("Creation resource warning {}", e.getMessage());
-			finalResult.put("Failed", Collections.emptyList());
-			return finalResult;
+			System.out.println("Creation resource warning {} " +  e.getMessage());
+			System.out.println("Failed " + Collections.emptyList());
+			return response;
 		}
 
 	}
